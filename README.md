@@ -28,4 +28,6 @@
 ![Software layers](software-layers.png)
 HAL - Hardware abstraction layer
 
+![Image defintion](layers-and-images.png)
+
     
