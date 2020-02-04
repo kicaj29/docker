@@ -14,7 +14,7 @@
 |docker stop 347| stops the container (part of container ID or name has to be provided)|
 |docker ps -a|show all processes also these which are stopped|
 |docker ps -a --no-trunc|show all processes also these which are stopped without truncating out on the console|
-|docker start 347|starts selected container|
+|docker start 347|starts selected container, use parameter *-i* for interactive modex|
 |docker images||
 |docker rm 347|removes container (not the image)|
 |docker rmi nginx fce|removes image(s)|
@@ -47,13 +47,32 @@ Nano server image is ~400 MB but windows server core image is ~4GB.
 
 Files system is isolated in the containers. It means that if in the container we will execute *ls* command then we will see only files that are in this container.
 
-*docker run -it microsoft/dotnet:nanoserver powershell*
+```
+docker run -it microsoft/dotnet:nanoserver powershell
+```
 ![ls](ls.png)
+
+Next for example we can create a file:
+```
+New-Item -Path . -Name "testfile1.txt" -ItemType "file" -Value "This is a text string."
+```
 
 Container file system should be visible as separated disk but it did not appear on my machine. If it would appear then it is possible to assign letter to it and use it in host Windows Explorer.
 
-It looks that container runs as long as process inside container runs.
+It looks that container runs as long as process inside container runs.   
+
+If we stop and start the container the created file will still be there.
 
 ![disks](disks.png)
+
+### Processes
+
+Processes are isolated using namespaces. In windows equivalent of namespace is Job object ID (sort by this column in task manager).   
+Processes inside of a container cannot see processes which run outside of container but outside processes can see processes that run inside of a container.   
+On Linux inside processes get new IDs, on Windows not.
+
+![](host-process-tree.png)
+
+
 
 
