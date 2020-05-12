@@ -37,12 +37,12 @@
 |docker rm -fv 896|removes containers and its volume - REMOVES ONLY NOT NAMED VOLUMES|
 |docker image prune|removes dangline images (images that do not have any tags)|
 |docker images -f dangling=true|Lists all dangling images. Command *docker images* does not not show dangling images!.|
-| ![](\images\filter.png) | filter results|
+| ![](.\images\filter.png) | filter results|
 
 
 
 # software layers
-![Software layers](\images\software-layers.png)
+![Software layers](images/software-layers.png)
 HAL - Hardware abstraction layer
 
 ![Image defintion](\images\layers-and-images.png)
