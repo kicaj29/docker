@@ -37,7 +37,7 @@
 |docker rm -fv 896|removes containers and its volume - REMOVES ONLY NOT NAMED VOLUMES|
 |docker image prune|removes dangline images (images that do not have any tags)|
 |docker images -f dangling=true|Lists all dangling images. Command *docker images* does not not show dangling images!.|
-| ![](.\images\filter.png) | filter results|
+| ![](images/filter.png) | filter results|
 
 
 
@@ -45,15 +45,15 @@
 ![Software layers](images/software-layers.png)
 HAL - Hardware abstraction layer
 
-![Image defintion](\images\layers-and-images.png)
+![Image defintion](images/layers-and-images.png)
 
 >**All containers share the same kernel. VMs user separated kernels inside each VM. That`s why starting VM takes longer then starting container.**
     
 Containers are less isolated then VMs.
 
-![multiple images](\images\multiple-images.png)
+![multiple images](images/multiple-images.png)
 
-![layer-reuse](\images\layer-reuse.png)
+![layer-reuse](images/layer-reuse.png)
 >If we are running MongoDB on windows server core containers it shares exactly the same base layer (OS apps and libs) as running IIS on windows server core. There is no reason to duplicate it. If we want reuse this layer we have to make sure that the content is the same. It is preserved because images are read only. *Does it mean that before loading a layer there is some hash computed and checked if it matches to some already loaded layer?* TBD
 
 Nano server image is ~400 MB but windows server core image is ~4GB.
@@ -65,7 +65,7 @@ Files system is isolated in the containers. It means that if in the container we
 ```
 docker run -it microsoft/dotnet:nanoserver powershell
 ```
-![ls](\images\ls.png)
+![ls](images/ls.png)
 
 Next for example we can create a file:
 ```
@@ -78,7 +78,7 @@ It looks that container runs as long as process inside container runs.
 
 If we stop and start the container the created file will still be there.
 
-![disks](\images\disks.png)
+![disks](images/disks.png)
 
 ## Processes
 
@@ -89,7 +89,7 @@ On Linux inside processes get new IDs, on Windows not.
 NOTE: take a look on [2 types containers for Windows](#2-types-containers-for-Windows) chapter.
 
 
-![](\images\host-process-tree.png)
+![](images/host-process-tree.png)
 
 ## Network
 Network inside container is isolated from host machine.
@@ -112,7 +112,7 @@ Users and groups are isolated.
 
 When we run windows server containers with process isolation type on host machine are listed process that comes from containers!
 
-![](\images\2-types-windows-containers.png)
+![](images/2-types-windows-containers.png)
 
 It looks that VM isolation type offers stronger isolation but it boots much faster then normal VM.
 
@@ -132,7 +132,7 @@ D:\temp>docker save microsoft/iis:nanoserver -o iis.tar
 ## mount Windows file system in Linux VM
 First we have to make visible Windows file system in Linux VM that is used as host for Linux containers.
 **Switch to Linux containers and select both drives.**
-![](\images\shared-drives.png)
+![](images/shared-drives.png)
 
 Next we can run the following commands to check that windows file system now is visible on MobyLinuxVM.
 
@@ -141,7 +141,7 @@ docker run --privileged -it -v /var/run/docker.sock:/var/run/docker.sock jongall
 docker run --net=host --ipc=host --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine /bin/sh
 chroot /host
 ```
-![](\images\access-linuxVM-fromWindows.png)
+![](images/access-linuxVM-fromWindows.png)
 In this way we can see that shared drivers from Windows host now are visible on MobyLinuxVM.
 
 Next for example we can run
@@ -168,14 +168,14 @@ docker run --rm -it -v d:/temp:/data alpine tar -xf /data/iis.tar -C /data/iis
 ```
 > NOTE: before running the above command create on Windows folder *iis* in folder *d:\temp*.
 
-![](\images\extracting.png)
+![](images/extracting.png)
 
 After this it is possible to extract also sub-layers.
-![](\images\sublayer.png)
+![](images/sublayer.png)
 
 Next we can see that this layer contains files from *System32* folder:
 
-![](\images\files-from-layer.png)
+![](images/files-from-layer.png)
 
 In case you want mount only the file execute the following commands:
 
@@ -194,7 +194,7 @@ There are 3 strategies
 
 ## Volume mount
 1. Create somewhere on Windows host folder with static files of some web page. For example:
-![](\images\solitarie-app.png)
+![](images/solitarie-app.png)
 
 2. Open PS and navigate to *solitaire* folder.
 
@@ -202,10 +202,10 @@ There are 3 strategies
 ```
 docker run --rm -it -p 8080:80 nginx
 ```
-![](\images\nginx-empty.png)
+![](images/nginx-empty.png)
 
 4. Press ctrl+c to stop the container.
-![](\images\stop-empty-nginx.png)
+![](images/stop-empty-nginx.png)
 
 5. Using the following command it is possible to **mount** web site files in nginx server.
 ```
@@ -224,13 +224,13 @@ docker run -d -p 8080:80 --name mynginx nginx
 docker exec -it mynginx bash
 ```
 Next we can see how looks file system in mynginx container.
-![](\images\nginx-detach.png)
+![](images/nginx-detach.png)
 After checking this exit from the bash.
 
 ```
 docker cp .\app\. mynginx:/usr/share/nginx/html
 ```
-![](\images\nginx-after-copy.png)
+![](images/nginx-after-copy.png)
 
 Next we can open *localhost:8080* in web browser to see this web page.
 
@@ -240,14 +240,14 @@ Next we can open *localhost:8080* in web browser to see this web page.
 
 To create a new image we will use the same image that has been created in chapter **Copy into the Container File System**. We can check that it is still up and running and contains copied earlier files.
 
-![](\images\list-files.png)
+![](images/list-files.png)
 
 Next execute command *docker commit* to create new image with current state of the mynginx image.
 
 ```
 docker commit mynginx solitaire:mynginx
 ```
-![](\images\images.png)
+![](images/images.png)
 
 In next step we can create container from the created image.
 
@@ -266,7 +266,7 @@ docker history solitaire:mynginx
 docker history solitaire:mynginx --no-trunc
 ```
 
-![](\images\docker-history.png)
+![](images/docker-history.png)
 In red we can see additional layer created by *commit* command.
 
 There is also command *docker diff* that can be used to compare **container** **with** its **image**.
@@ -277,7 +277,7 @@ docker diff mynginx
 
 We can see what files have been added to this container.
 
-![](\images\docker-diff.png)
+![](images/docker-diff.png)
 
 Dot in docker build command points current folder.
 
@@ -287,15 +287,15 @@ It works like math union operator. It takes different layers and it aggregates t
 
 Each different layer can contribute files and if you want make a change to a file in a layer above then the file in that layer above trump the file in the layer below - top most files win.
 
-![](\images\image-vs-container-layers.png)
+![](images/image-vs-container-layers.png)
 
 ### dockerfile
 
-![](\images\dockerfile.png)
+![](images/dockerfile.png)
 
 Create docker file and place it in solitaire folder.
 
-![](\images\solitatire-folder.png)
+![](images/solitatire-folder.png)
 
 Next we can create a new image
 
@@ -304,7 +304,7 @@ docker build -t solitaire:nginx-df .
 ```
 (dot points current folder)
 
-![](\images\docker-build.png)
+![](images/docker-build.png)
 
 In similar way we can create image that uses iis. **Before doing it make sure that docker is set on windows containers mode**.
 
@@ -319,29 +319,29 @@ and next run
 ```
 docker build -t solitaire:iis-df .
 ```
-![](\images\build-iis-image.png)
+![](images/build-iis-image.png)
 
 Next run the container and open the app in web browser
 ```
 docker run -d -p 8090:80 solitaire:iis-df
 ```
 
-![](\images\docker-run.png)
+![](images/docker-run.png)
 Although there is some error in the output the app can be displayed in web browser.
 
 # push images to docker hub
 
 First an image has to be tagged using tag command. There has to be used name of your account in docker hub.
 
-![](\images\docker-tag.png)
+![](images/docker-tag.png)
 
 Next login to docker hub:
 
-![](\images\docker-login.png)
+![](images/docker-login.png)
 
 Next we can push the image
 
-![](\images\docker-push.png)
+![](images/docker-push.png)
 
 after this we can go to https://hub.docker.com/ and see that image is there.
 
@@ -355,7 +355,7 @@ after this we can go to https://hub.docker.com/ and see that image is there.
 docker pull microsoft/mssql-server-windows-express
 ```
 
-![](\images\sql-server-download-image.png)
+![](images/sql-server-download-image.png)
 
 2. create and run container, next check logs
 ```
@@ -367,11 +367,11 @@ NOTE: make sure that used port for mapping is not used by the host!
 
 NOTE1: by default this container is run with isolation **hyperv**. This can be checked by *docker inspect* command.
 
-![](\images\docker-run-sql-server.png)
+![](images/docker-run-sql-server.png)
 
 Next we can connect to this server.
 
-![](\images\connect-to-sql-server.png)
+![](images/connect-to-sql-server.png)
 
 ## mysql server container for Linux
 
@@ -385,7 +385,7 @@ docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql
 docker exec -it fa7 mysql -uroot -pmy-secret-pw
 ```
 
-![](\images\mysql-client.png)
+![](images/mysql-client.png)
 
 ## docker mamanged volumes (based on mysql example)
 
@@ -406,22 +406,22 @@ Volumes can be sepcified in dockerfile https://github.com/docker-library/mysql/b
 ```
 docker run --name some-mysql-volume -e MYSQL_ROOT_PASSWORD=my-secret-pw -d -v db:/var/lib/mysql mysql
 ```
-![](\images\create-volume.png)
+![](images/create-volume.png)
 
 2. create database
 ```
 docker exec -it c47 mysql -uroot -pmy-secret-pw
 ```
 
-![](\images\create-db.png)
+![](images/create-db.png)
 
 3. remove all mysql containers
 
-![](\images\remove-mysql-containers.png)
+![](images/remove-mysql-containers.png)
 
 4. that volumes are still there
 
-![](\images\docker-volume-ls.png)
+![](images/docker-volume-ls.png)
 
 5. create new container and reuse existing volume
 ```
@@ -429,7 +429,7 @@ docker run --name some-mysql-reuse-volume -e MYSQL_ROOT_PASSWORD=my-secret-pw -d
 ```
 
 We can see that new container uses volume created in the previous container because it already has pets DB.
-![](\images\reuse-volume.png)
+![](images/reuse-volume.png)
 
 ### dangling volumes
 
@@ -437,7 +437,7 @@ We can see that new container uses volume created in the previous container beca
 
 To identify which volume is used by particular container run *docker inspect* and go to section **Mounts**.
 
-![](\images\mounts.png)
+![](images/mounts.png)
 Name contains name of the volume and Source contains path to folder from the container host.
 
 Use the following command to find all dangling volumes.
@@ -456,7 +456,7 @@ docker volume rm $(docker volume ls -qf dangling=true)
 
 1. Let`s assume that we have these images:
 
-![](\images\dangling-images1.png)
+![](images/dangling-images1.png)
 
 2. Next create new image with the same repo and tag that already exists.  **Make sure it will not use any cache because then dangling image would not appear**.
 
@@ -465,14 +465,14 @@ docker build -t solitaire:nginx-df .
 ```
 
 We can see now that 1c6 is used only by one repo.
-![](\images\dangling-images2.png)
+![](images/dangling-images2.png)
 
 3. Next assign tag used for 1c6 to newly created image f4e.
 
-![](\images\dangling-images3.png)
+![](images/dangling-images3.png)
 **It will cause that image 1c6 will not have assigned any tag and will become dangling image**
 
-![](\images\dangling-images4.png)
+![](images/dangling-images4.png)
 
 # docker compose
 
@@ -485,14 +485,14 @@ Use the following command to execure docker-compose.yml file.
 docker-compose up
 ```
 
-![](\images\docker-compose-up.png)
+![](images/docker-compose-up.png)
 
 Next configure team city server (open in web browser *localhost:8111*).
 
-![](\images\teamcity-setup.png)
+![](images/teamcity-setup.png)
 Database host is just name of the container and database name is defined in yml file *POSTGRES_DB=teamcity*. Default user name is *postgres* and password is not set.
 
-![](\images\teamcity-setup1.png)
+![](images/teamcity-setup1.png)
 
 ## starting containers with docker-compose
 
@@ -502,7 +502,7 @@ To check status of containers from the particular docker-compose.yml file use th
 docker-compose ps
 ```
 
-![](\images\docker-compose-ps.png)
+![](images/docker-compose-ps.png)
 
 If some services (containers) are down we can start them by using command
 
@@ -512,7 +512,7 @@ docker-compose start [services...]
 
 NOTE: names of services must be the same like in yml file and not names of containers.
 
-![](\images\docker-compose-start.png)
+![](images/docker-compose-start.png)
 
 ## logs
 
@@ -520,7 +520,7 @@ NOTE: names of services must be the same like in yml file and not names of conta
 docker-compose logs [services...]
 ```
 
-![](\images\docker-compose-logs.png)
+![](images/docker-compose-logs.png)
 
 ## network
 
@@ -529,11 +529,11 @@ docker network ls
 docker network inspect [netowrk name..]
 ```
 
-![](\images\docker-network.png)
+![](images/docker-network.png)
 
 We can also check if services see each other:
 
-![](\images\ping.png)
+![](images/ping.png)
 
 We can also run new container and add it to the existing network
 
@@ -541,7 +541,7 @@ We can also run new container and add it to the existing network
 docker run --name alpine-net --rm --net teamcity_default -it alpine sh
 ```
 
-![](\images\add-to-network.png)
+![](images/add-to-network.png)
 
 ## psql for postgres DB
 
@@ -549,7 +549,7 @@ docker run --name alpine-net --rm --net teamcity_default -it alpine sh
 docker-compose exec postgres psql -U postgres
 ```
 
-![](\images\psql.png)
+![](images/psql.png)
 
 ## removing all infrastructure
 
@@ -557,7 +557,7 @@ docker-compose exec postgres psql -U postgres
 docker-compose rm -v -s
 ```
 
-![](\images\docker-compose-rm.png)
+![](images/docker-compose-rm.png)
 
 NOTE: -v is needed to remove also anonymous volumes.
 
@@ -567,7 +567,7 @@ To remove network dedicated command has to be used:
 docker-compose down
 ```
 
-![](\images\network-down.png)
+![](images/network-down.png)
 
 # links
 https://git.io/vPj49 (from https://app.pluralsight.com/library/courses/docker-windows-getting-started)
