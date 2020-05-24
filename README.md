@@ -1,3 +1,41 @@
+- [commands](#commands)
+- [software layers](#software-layers)
+  * [Files system in containers](#files-system-in-containers)
+  * [Processes](#processes)
+  * [Network](#network)
+  * [Environment variables](#environment-variables)
+  * [Registry (only for Windows)](#registry--only-for-windows-)
+  * [Users and groups](#users-and-groups)
+  * [2 types containers for Windows](#2-types-containers-for-windows)
+- [mounting Windows file system in Linux container](#mounting-windows-file-system-in-linux-container)
+  * [mount Windows file system in Linux VM](#mount-windows-file-system-in-linux-vm)
+  * [mount folder from Linux VM to pointed container](#mount-folder-from-linux-vm-to-pointed-container)
+- [building images to host web sites](#building-images-to-host-web-sites)
+  * [Volume mount](#volume-mount)
+  * [Copy into the Container File System](#copy-into-the-container-file-system)
+  * [Bake into an Image](#bake-into-an-image)
+    + [Creating a new image](#creating-a-new-image)
+    + [Union File System](#union-file-system)
+    + [dockerfile](#dockerfile)
+- [push images to docker hub](#push-images-to-docker-hub)
+- [databases in containers](#databases-in-containers)
+  * [sql server container for Windows](#sql-server-container-for-windows)
+  * [mysql server container for Linux](#mysql-server-container-for-linux)
+  * [docker mamanged volumes (based on mysql example)](#docker-mamanged-volumes--based-on-mysql-example-)
+    + [create and reuse volume in antoher container](#create-and-reuse-volume-in-antoher-container)
+    + [dangling volumes](#dangling-volumes)
+- [dangling images](#dangling-images)
+- [docker compose](#docker-compose)
+  * [starting containers with docker-compose](#starting-containers-with-docker-compose)
+  * [logs](#logs)
+  * [network](#network)
+  * [psql for postgres DB](#psql-for-postgres-db)
+  * [removing all infrastructure](#removing-all-infrastructure)
+- [links](#links)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 # commands
 | command | comments |
 |----------|----------|
