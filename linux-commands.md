@@ -43,7 +43,7 @@ BUG_REPORT_URL="https://bugs.alpinelinux.org/"
 
 # how to enable hyper-v enhanced mode on ubuntu
 
-```
+```sh
 sudo su
 # sometimes system may not be up-todate so it is good practice to update package information
 apt-get update
