@@ -40,3 +40,32 @@ PRETTY_NAME="Alpine Linux v3.11"
 HOME_URL="https://alpinelinux.org/"
 BUG_REPORT_URL="https://bugs.alpinelinux.org/"
 ```
+
+# how to enable hyper-v enhanced mode on ubuntu
+
+```
+sudo su
+# sometimes system may not be up-todate so it is good practice to update package information
+apt-get update
+apt install git
+git clone https://github.com/Microsoft/linux-vm-tools.git
+cd /home/kicaj/linux-vm-tools
+cd ubuntu
+ls
+cd ubuntu 16.04
+ls
+chmod +x *sh
+./install.sh
+reboot
+```
+after reboot
+```
+sudo su
+cd /home/kicaj/linux-vm-tools/ubuntu/16.04
+./config-user.sh
+shutdown -h now
+```
+```
+set-vm -VMName ubuntu-20.04-desktop-amd64 -EnhancedSessionTransportType HvSocket
+```
+Run VM with ubuntu one again.
