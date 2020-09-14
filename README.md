@@ -142,7 +142,7 @@ Registry is isolated.
 Users and groups are isolated.
 
 ## 2 types containers for Windows
-|  | Windows Server Containers | Hyper-V Containers|
+| Windows Server Containers | Hyper-V Containers|
 |----------|----------|
 | Isolation type | Process | VM |
 | Windows Server 2016 | Yes | Yes |
