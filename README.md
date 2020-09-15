@@ -1,36 +1,36 @@
 - [commands](#commands)
 - [software layers](#software-layers)
-  * [Files system in containers](#files-system-in-containers)
-  * [Processes](#processes)
-  * [Network](#network)
-  * [Environment variables](#environment-variables)
-  * [Registry (only for Windows)](#registry--only-for-windows-)
-  * [Users and groups](#users-and-groups)
-  * [2 types containers for Windows](#2-types-containers-for-windows)
+  - [Files system in containers](#files-system-in-containers)
+  - [Processes](#processes)
+  - [Network](#network)
+  - [Environment variables](#environment-variables)
+  - [Registry (only for Windows)](#registry-only-for-windows)
+  - [Users and groups](#users-and-groups)
+  - [2 types containers for Windows](#2-types-containers-for-windows)
 - [mounting Windows file system in Linux container](#mounting-windows-file-system-in-linux-container)
-  * [mount Windows file system in Linux VM](#mount-windows-file-system-in-linux-vm)
-  * [mount folder from Linux VM to pointed container](#mount-folder-from-linux-vm-to-pointed-container)
+  - [mount Windows file system in Linux VM](#mount-windows-file-system-in-linux-vm)
+  - [mount folder from Linux VM to pointed container](#mount-folder-from-linux-vm-to-pointed-container)
 - [building images to host web sites](#building-images-to-host-web-sites)
-  * [Volume mount](#volume-mount)
-  * [Copy into the Container File System](#copy-into-the-container-file-system)
-  * [Bake into an Image](#bake-into-an-image)
-    + [Creating a new image](#creating-a-new-image)
-    + [Union File System](#union-file-system)
-    + [dockerfile](#dockerfile)
+  - [Volume mount](#volume-mount)
+  - [Copy into the Container File System](#copy-into-the-container-file-system)
+  - [Bake into an Image](#bake-into-an-image)
+    - [Creating a new image](#creating-a-new-image)
+    - [Union File System](#union-file-system)
+    - [dockerfile](#dockerfile)
 - [push images to docker hub](#push-images-to-docker-hub)
 - [databases in containers](#databases-in-containers)
-  * [sql server container for Windows](#sql-server-container-for-windows)
-  * [mysql server container for Linux](#mysql-server-container-for-linux)
-  * [docker mamanged volumes (based on mysql example)](#docker-mamanged-volumes--based-on-mysql-example-)
-    + [create and reuse volume in antoher container](#create-and-reuse-volume-in-antoher-container)
-    + [dangling volumes](#dangling-volumes)
+  - [sql server container for Windows](#sql-server-container-for-windows)
+  - [mysql server container for Linux](#mysql-server-container-for-linux)
+  - [docker mamanged volumes (based on mysql example)](#docker-mamanged-volumes-based-on-mysql-example)
+    - [create and reuse volume in antoher container](#create-and-reuse-volume-in-antoher-container)
+    - [dangling volumes](#dangling-volumes)
 - [dangling images](#dangling-images)
 - [docker compose](#docker-compose)
-  * [starting containers with docker-compose](#starting-containers-with-docker-compose)
-  * [logs](#logs)
-  * [network](#network)
-  * [psql for postgres DB](#psql-for-postgres-db)
-  * [removing all infrastructure](#removing-all-infrastructure)
+  - [starting containers with docker-compose](#starting-containers-with-docker-compose)
+  - [logs](#logs)
+  - [network](#network-1)
+  - [psql for postgres DB](#psql-for-postgres-db)
+  - [removing all infrastructure](#removing-all-infrastructure)
 - [links](#links)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -165,6 +165,31 @@ In purpose of this example let`s create tar file that later will be accessed fro
 
 ```
 D:\temp>docker save microsoft/iis:nanoserver -o iis.tar
+```
+>NOTE: to run docker save we have to first download the image using ```docker pull``` command, more [here](https://stackoverflow.com/questions/51309615/docker-save-without-docker-pull).
+
+>NOTE1: sometimes Microsoft exposes the same images in different repositories. For example below we can see the image ```d4d34a16ef9d``` is available for repository ```microsoft/iis``` and ```mcr.microsoft.com/windows/servercore/iis```. It looks that ```microsoft/iis``` is somehow obsolete because in docker hub I was able find only page for the second repo https://hub.docker.com/_/microsoft-windows-servercore-iis.
+```ps
+PS D:\dockershare> docker images
+REPOSITORY                             TAG                 IMAGE ID            CREATED             SIZE
+mcr.microsoft.com/windows/nanoserver   1809                9e0259a60cc3        13 days ago         251MB
+microsoft/iis                          nanoserver          d4d34a16ef9d        22 months ago       1.29GB
+PS D:\dockershare> docker pull mcr.microsoft.com/windows/servercore/iis:nanoserver
+nanoserver: Pulling from windows/servercore/iis
+Digest: sha256:6064d49ffd47f2c36c3bfbdd74ed87ec6932351de2dd81e90a6f5a7b27343c8f
+Status: Downloaded newer image for mcr.microsoft.com/windows/servercore/iis:nanoserver
+mcr.microsoft.com/windows/servercore/iis:nanoserver
+PS D:\dockershare> docker pull mcr.microsoft.com/windows/servercore/iis:nanoserver
+nanoserver: Pulling from windows/servercore/iis
+Digest: sha256:6064d49ffd47f2c36c3bfbdd74ed87ec6932351de2dd81e90a6f5a7b27343c8f
+Status: Image is up to date for mcr.microsoft.com/windows/servercore/iis:nanoserver
+mcr.microsoft.com/windows/servercore/iis:nanoserver
+PS D:\dockershare> docker images
+REPOSITORY                                 TAG                 IMAGE ID            CREATED             SIZE
+mcr.microsoft.com/windows/nanoserver       1809                9e0259a60cc3        13 days ago         251MB
+microsoft/iis                              nanoserver          d4d34a16ef9d        22 months ago       1.29GB
+mcr.microsoft.com/windows/servercore/iis   nanoserver          d4d34a16ef9d        22 months ago       1.29GB
+PS D:\dockershare>
 ```
 
 ## mount Windows file system in Linux VM
