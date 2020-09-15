@@ -166,7 +166,7 @@ In purpose of this example let`s create tar file that later will be accessed fro
 ```
 D:\temp>docker save microsoft/iis:nanoserver -o iis.tar
 ```
->NOTE: to run docker save we have to first download the image using ```docker pull``` command, more [here](https://stackoverflow.com/questions/51309615/docker-save-without-docker-pull).
+>NOTE: to run ```docker save``` we have to first download the image using ```docker pull``` command, more [here](https://stackoverflow.com/questions/51309615/docker-save-without-docker-pull).
 
 >NOTE1: sometimes Microsoft exposes the same images in different repositories. For example below we can see the image ```d4d34a16ef9d``` is available for repository ```microsoft/iis``` and ```mcr.microsoft.com/windows/servercore/iis```. It looks that ```microsoft/iis``` is somehow obsolete because in docker hub I was able find only page for the second repo https://hub.docker.com/_/microsoft-windows-servercore-iis.
 ```ps
