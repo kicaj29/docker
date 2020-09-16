@@ -161,10 +161,12 @@ docker run -it --isolation=hyperv hello-world
 ```
 # mounting Windows file system in Linux container
 
-In purpose of this example let`s create tar file that later will be accessed from Linux container - this command should be executed when Windows containers are used:
+In purpose of this example let`s create tar file that later will be accessed from Linux container. ```tar``` command does not exist on Windows so we will mount folder with the tar file on linux container to execute ```tar``` command there.   
+
+This command should be executed when Windows containers are used. After executing this command switch to linux containers.
 
 ```
-D:\temp>docker save microsoft/iis:nanoserver -o iis.tar
+D:\dockershare>docker save microsoft/iis:nanoserver -o iis.tar
 ```
 >NOTE: to run ```docker save``` we have to first download the image using ```docker pull``` command, more [here](https://stackoverflow.com/questions/51309615/docker-save-without-docker-pull).
 
@@ -218,18 +220,18 @@ More here:
 https://blog.jongallant.com/2017/11/ssh-into-docker-vm-windows/
 
 ## mount folder from Linux VM to pointed container
-Finally we can mount selected folder in pointed container. The following command will mount *d:/temp* under */data* and next will list content of *data* folder.
+Finally we can mount selected folder in pointed container. The following command will mount *d:/dockershare* under */data* and next will list content of *data* folder.
    
 ```
-docker run --rm -v d:/temp:/data alpine ls /data
+docker run --rm -v d:/dockershare:/data alpine ls /data
 ```
 
 To extract the file from Linux container to Windows host execute the following command:
 
 ```
-docker run --rm -it -v d:/temp:/data alpine tar -xf /data/iis.tar -C /data/iis
+docker run --rm -it -v d:/dockershare:/data alpine tar -xf /data/iis.tar -C /data/iis
 ```
-> NOTE: before running the above command create on Windows folder *iis* in folder *d:\temp*.
+> NOTE: before running the above command create on Windows folder *iis* in folder *d:\dockershare*.
 
 ![](images/extracting.png)
 
@@ -251,6 +253,26 @@ docker run --rm -it -v d:/temp/iis.tar:/data/iis.tar alpine sh
 / # apk add --no-cache jq
 / # cat manifest.json | jq
 ```
+
+Another option is to use the following command:
+```
+PS D:\dockershare> docker run --rm -it -v d:/dockershare:/data alpine /bin/sh -c  "mkdir /data/iis-extract; tar -xf /data/iis.tar -C /data/iis-extract; cd /data/iis-extract; ls -l"
+total 6
+drwxrwxrwx    1 root     root             0 Sep 16 07:22 158be22956b73b36b28fa03970034128672b610bc9dca903c32848e3234fed11
+drwxrwxrwx    1 root     root             0 Sep 16 07:22 6d8fc1d8931382377afab31bc70f27c2d0a8903b528e88ee3570614f0b5f1628
+drwxrwxrwx    1 root     root             0 Sep 16 07:23 94494f2dcd1de36c2fb3786547dcab43e2dca9159c73aff7a0e60aafc9347fc9
+-rwxr-xr-x    1 root     root          3233 Nov 13  2018 d4d34a16ef9d92b7fba6c81d175ee221b3326420928338523f1f52e2f8925042.json
+drwxrwxrwx    1 root     root             0 Sep 16 07:24 ef6e630df0924913141849201d3d12e5a64e53e3e5c5503e366b08ca6c0ef47e
+drwxrwxrwx    1 root     root             0 Sep 16 07:24 fddfce52484a6b63ea05b3f86d501a08ad9d91ccec8911fddc908fca7c59c12f
+-rwxr-xr-x    1 root     root          1151 Jan  1  1970 manifest.json
+-rwxr-xr-x    1 root     root           100 Jan  1  1970 repositories
+```
+It will:
+* mount folder ```dockershare```
+* create new folder ```/data/iis-extract```
+* extract tar file to folder ```/data/iis-extract```
+* switch to folder ```/data/iis-extract```
+* display content of folder ```/data/iis-extract```
 
 # building images to host web sites
 There are 3 strategies
