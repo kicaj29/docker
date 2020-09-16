@@ -270,7 +270,7 @@ drwxrwxrwx    1 root     root             0 Sep 16 07:24 fddfce52484a6b63ea05b3f
 It will:
 * mount folder ```dockershare```
 * create new folder ```/data/iis-extract```
-* extract tar file to folder ```/data/iis-extract```
+* extract tar file to folder ```/data/iis-extract``` (more [here](https://www.tecmint.com/extract-tar-files-to-specific-or-different-directory-in-linux/))
 * switch to folder ```/data/iis-extract```
 * display content of folder ```/data/iis-extract```
 
