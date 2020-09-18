@@ -32,6 +32,7 @@
   - [psql for postgres DB](#psql-for-postgres-db)
   - [removing all infrastructure](#removing-all-infrastructure)
   - [multiple instances](#multiple-instances)
+  - [adding nginx](#adding-nginx)
 - [links](#links)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -747,6 +748,13 @@ By running ```docker network inspect teamcity_multiple_instances_default``` we c
     }
 }
 ```
+
+## adding nginx
+To access service ```teamcity``` without knowing its port we need to add load balancer. We will use **nginx**.
+
+[nginx.conf](./teamcity/teamcity_multiple_instances/nginx.conf)
+
+This will configure NGINX to forward the request from port 4000 to http://teamcity:8111. This will then be resolved by Docker’s embedded DNS server, which will use a round robin implementation to resolve the DNS requests based on the service name and distribute them to the Docker containers.
 
 # links
 https://git.io/vPj49 (from https://app.pluralsight.com/library/courses/docker-windows-getting-started)   
