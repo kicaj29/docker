@@ -32,7 +32,7 @@
   - [psql for postgres DB](#psql-for-postgres-db)
   - [removing all infrastructure](#removing-all-infrastructure)
   - [multiple instances](#multiple-instances)
-  - [adding nginx](#adding-nginx)
+    - [adding nginx](#adding-nginx)
 - [links](#links)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -749,7 +749,7 @@ By running ```docker network inspect teamcity_multiple_instances_default``` we c
 }
 ```
 
-## adding nginx
+### adding nginx
 To access service ```teamcity``` without knowing its port we need to add load balancer. We will use **nginx**.
 
 [nginx.conf](./teamcity/teamcity_multiple_instances/nginx.conf)
