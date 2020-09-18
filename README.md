@@ -31,6 +31,7 @@
   - [network](#network-1)
   - [psql for postgres DB](#psql-for-postgres-db)
   - [removing all infrastructure](#removing-all-infrastructure)
+  - [multiple instances](#multiple-instances)
 - [links](#links)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -654,7 +655,102 @@ docker-compose down
 
 ![](images/network-down.png)
 
+## multiple instances
+
+To run multiple instances via ```docker-compose``` use parameter ```--scale```.
+
+For example is we want run 3 instances of ```teamcity``` service execute the following command:
+```
+docker-compose up --scale teamcity=3
+```
+
+However this command will generate an error. This error occurs because we want map all 3 services ```teamcity``` to the same port 8111 on the host machine.
+
+<details>
+<summary>output with the described error</summary>
+<p>
+
+```ps
+PS D:\GitHub\kicaj29\docker\teamcity\teamcity_multiple_instances> docker-compose up --scale teamcity=3
+Creating network "teamcity_multiple_instances_default" with the default driver
+WARNING: The "teamcity" service specifies a port on the host. If multiple containers for this service are created on a single host, the port will clash.
+Creating teamcity_multiple_instances_teamcity-agent_1 ...
+Creating teamcity_multiple_instances_postgres_1       ...
+Creating teamcity_multiple_instances_teamcity_1       ...
+Creating teamcity_multiple_instances_teamcity_1       ... done
+Creating teamcity_multiple_instances_teamcity_3       ...
+Creating teamcity_multiple_instances_teamcity_2       ... error
+WARNING: Host is already in use by another container
+
+ERROR: for teamcity_multiple_instances_teamcity_3  Cannot start service teamcity: driver failed programming external connectivity on endpoint teamcity_multiple_instances_teamcity_3 (4d6da1cf1f641578da6bf763d3962b4619c88706682d16831c6c6c75b6Creating teamcity_multiple_instances_teamcity-agent_1 ... done
+Creating teamcity_multiple_instances_postgres_1       ... done
+ERROR: for teamcity_multiple_instances_teamcity_2  Cannot start service teamcity: driver failed programming external connectivity on endpoint teamcity_multiple_instances_teamcity_2 (8de5a939d13ad4e3b2257ef6d7ef99a949c1765e9a35a4ede494defe086b72e4): Bind for 0.0.0.0:8111 failed: port is already allocated
+
+ERROR: for teamcity  Cannot start service teamcity: driver failed programming external connectivity on endpoint teamcity_multiple_instances_teamcity_3 (4d6da1cf1f641578da6bf763d3962b4619c88706682d16831c6c6c75b6fc7545): Bind for 0.0.0.0:8111 failed: port is already allocated
+ERROR: Encountered errors while bringing up the project.
+PS D:\GitHub\kicaj29\docker\teamcity\teamcity_multiple_instances> docker-compose ps
+                    Name                                  Command               State             Ports
+----------------------------------------------------------------------------------------------------------------
+teamcity_multiple_instances_postgres_1         docker-entrypoint.sh postgres   Up         5432/tcp
+teamcity_multiple_instances_teamcity-agent_1   /docker-entrypoint.sh           Exit 42
+teamcity_multiple_instances_teamcity_1         /docker-entrypoint.sh           Up         0.0.0.0:8111->8111/tcp
+teamcity_multiple_instances_teamcity_2         /docker-entrypoint.sh           Exit 128
+teamcity_multiple_instances_teamcity_3         /docker-entrypoint.sh           Exit 128
+```
+</p>
+</details>   
+   
+To fix this problem we have to change one line in the ```docker-compose``` file. Port definition for ```teamcity``` service has to be changed from ```- 8111:8111``` (host_port:container_port) to ```- 8111``` (only container_port). This will expose the port ```8111``` of the container to an ephemeral unallocated port on the host machine. The only problem with this approach is that we won’t know the ports to access the services until the containers are started.
+
+```
+PS D:\GitHub\kicaj29\docker\teamcity\teamcity_multiple_instances> docker-compose ps
+                    Name                                  Command              State            Ports
+--------------------------------------------------------------------------------------------------------------
+teamcity_multiple_instances_postgres_1         docker-entrypoint.sh postgres   Up      5432/tcp
+teamcity_multiple_instances_teamcity-agent_1   /docker-entrypoint.sh           Up      9090/tcp
+teamcity_multiple_instances_teamcity_1         /docker-entrypoint.sh           Up      0.0.0.0:32770->8111/tcp
+teamcity_multiple_instances_teamcity_2         /docker-entrypoint.sh           Up      0.0.0.0:32769->8111/tcp
+teamcity_multiple_instances_teamcity_3         /docker-entrypoint.sh           Up      0.0.0.0:32768->8111/tcp
+```
+
+By running ```docker network inspect teamcity_multiple_instances_default``` we can also check that 3 instances of ```teamcity``` service have different internal (container) IP addresses (that`s why they can work on the same port 8111).
+
+```json
+"Containers": {
+    "155aaeef2a712306e79e9334b00e938dffebdbb2001874f03515c331e436e1f3": {
+        "Name": "teamcity_multiple_instances_postgres_1",
+        "EndpointID": "617c65a3318530f117e91e8c698527de2b0fc014fadcccb8035914c84ae48581",
+        "MacAddress": "02:42:ac:14:00:06",
+        "IPv4Address": "172.20.0.6/16",
+        "IPv6Address": ""
+    },
+    "3b95bd7f87a2468b71d24ea45d504ae1b4c7f779a35f6aee470b2cbbc6b74b3e": {
+        "Name": "teamcity_multiple_instances_teamcity_2",
+        "EndpointID": "1616fb19087105a1750f1f3614e4c7a85bfae6bf857ae4598d694b79969c947c",
+        "MacAddress": "02:42:ac:14:00:04",
+        "IPv4Address": "172.20.0.4/16",
+        "IPv6Address": ""
+    },
+    "8b2d58e7b8604ea61967c8d0f1c7007b4644937a96dc14c634e9baa33bac8ac3": {
+        "Name": "teamcity_multiple_instances_teamcity_1",
+        "EndpointID": "1acb1f78ab6da32c598b84ec990042d4295439baf7e3b12e07e7444624d56124",
+        "MacAddress": "02:42:ac:14:00:05",
+        "IPv4Address": "172.20.0.5/16",
+        "IPv6Address": ""
+    },
+    "abe9ce448a01b1fb54834aca61632b193dcb8641a7cf64f0349f836697749219": {
+        "Name": "teamcity_multiple_instances_teamcity_3",
+        "EndpointID": "efebe086a3bb5488511d2f9f295d03e961af80f707b5bf590b9737b359b799e7",
+        "MacAddress": "02:42:ac:14:00:02",
+        "IPv4Address": "172.20.0.2/16",
+        "IPv6Address": ""
+    }
+}
+```
+
 # links
-https://git.io/vPj49 (from https://app.pluralsight.com/library/courses/docker-windows-getting-started)
+https://git.io/vPj49 (from https://app.pluralsight.com/library/courses/docker-windows-getting-started)   
+
+https://pspdfkit.com/blog/2018/how-to-use-docker-compose-to-run-multiple-instances-of-a-service-in-development/
 
 
