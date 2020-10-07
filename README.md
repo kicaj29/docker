@@ -759,6 +759,6 @@ This will configure NGINX to forward the request from port 4000 to http://teamci
 # links
 https://git.io/vPj49 (from https://app.pluralsight.com/library/courses/docker-windows-getting-started)   
 
-https://pspdfkit.com/blog/2018/how-to-use-docker-compose-to-run-multiple-instances-of-a-service-in-development/
+https://pspdfkit.com/blog/2018/how-to-use-docker-compose-to-run-multiple-instances-of-a-service-in-development/   
 
-
+https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/linux-containers
