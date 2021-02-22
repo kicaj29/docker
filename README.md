@@ -33,6 +33,7 @@
   - [removing all infrastructure](#removing-all-infrastructure)
   - [multiple instances](#multiple-instances)
     - [adding nginx](#adding-nginx)
+- [VSCode and containers](#vscode-and-containers)
 - [links](#links)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -755,6 +756,29 @@ To access service ```teamcity``` without knowing its port we need to add load ba
 [nginx.conf](./teamcity/teamcity_multiple_instances/nginx.conf)
 
 This will configure NGINX to forward the request from port 4000 to http://teamcity:8111. This will then be resolved by Docker’s embedded DNS server, which will use a round robin implementation to resolve the DNS requests based on the service name and distribute them to the Docker containers.
+
+# VSCode and containers
+
+Install [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers). Additional docs are [here](https://code.visualstudio.com/docs/remote/containers).
+
+1. Open a Remote Window
+
+![vs-code-docker-001.png](./images/vs-code-docker-001.png)
+
+2. Open folder in container
+
+![vs-code-docker-002.png](./images/vs-code-docker-002.png)
+
+3. Select folder which we want mount in the container
+4. Select image that should be used to run the container
+
+If in the selected folder will be docker file then it will also appear on the list.
+
+![vs-code-docker-003.png](./images/vs-code-docker-003.png)
+
+5. .devcontainer
+
+Next new folder ```.devcontainer``` will be created with ```Dockerfile``` file and ```devcontainer.json``` file that contains configuration used to run the container.
 
 # links
 https://git.io/vPj49 (from https://app.pluralsight.com/library/courses/docker-windows-getting-started)   
