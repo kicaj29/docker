@@ -79,6 +79,7 @@
 |docker image prune|removes dangline images (images that do not have any tags)|
 |docker images -f dangling=true|Lists all dangling images. Command *docker images* does not not show dangling images!.|
 | ![](images/filter.png) | filter results|
+| docker ps -a \| awk '{ print $1,$2 }' \| grep centos:7 \| awk '{print $1 }' \| xargs -I {} docker rm -f {} | Remove all containers based on docker image name. More [here](https://linuxconfig.org/remove-all-containners-based-on-docker-image-name). It works only in bash command line! |
 
 
 
