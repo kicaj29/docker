@@ -17,6 +17,7 @@
     - [Creating a new image](#creating-a-new-image)
     - [Union File System](#union-file-system)
     - [dockerfile](#dockerfile)
+  - [Detailed information about image size](#detailed-information-about-image-size)
 - [push images to docker hub](#push-images-to-docker-hub)
 - [databases in containers](#databases-in-containers)
   - [sql server container for Windows](#sql-server-container-for-windows)
@@ -419,6 +420,13 @@ docker run -d -p 8090:80 solitaire:iis-df
 ![](images/docker-run.png)
 Although there is some error in the output the app can be displayed in web browser.
 
+
+## Detailed information about image size
+
+```
+docker system df -v
+```
+
 # push images to docker hub
 
 First an image has to be tagged using tag command. There has to be used name of your account in docker hub.
@@ -539,6 +547,7 @@ To remove all dangling volumes execute
 ```
 docker volume rm $(docker volume ls -qf dangling=true)
 ```
+
 
 # dangling images
 
