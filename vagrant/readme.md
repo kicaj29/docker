@@ -17,6 +17,8 @@ The recent package changes indicate a reboot is necessary.
 
 ## vagrant init
 
+https://app.vagrantup.com/boxes/search
+
 Before doing this open a new console to have fresh paths.
 
 ```
@@ -115,6 +117,8 @@ Executing syslinux-6.04_pre1-r10.trigger
 OK: 125 MiB in 95 packages
 ```
 
+https://wiki.alpinelinux.org/wiki/Docker#Installation
+
 ```
 alpine316:~$ sudo apk add docker
 (1/15) Installing libseccomp (2.5.2-r1)
@@ -137,15 +141,17 @@ Executing busybox-1.35.0-r17.trigger
 OK: 347 MiB in 110 packages
 ```
 
+Connecting to the Docker daemon through its socket requires you to add yourself to the `docker` group, in this case it is user `vagrant`.
 ```
 alpine316:~$ sudo addgroup vagrant docker
 ```
 
+To start the Docker daemon at boot:
 ```
 alpine316:~$ sudo rc-update add docker boot
  * service docker added to runlevel boot
 ```
-
+and next run:
 ```
 alpine316:~$ sudo service docker start
  * Caching service dependencies ...                                                                   [ ok ]
@@ -156,6 +162,7 @@ alpine316:~$ sudo service docker start
 ```
 
 ```
+alpine316:~$ sudo reboot -d 0
 alpine316:~$ Connection to 172.29.189.220 closed by remote host.
 Connection to 172.29.189.220 closed.
 ```
