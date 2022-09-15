@@ -211,3 +211,101 @@ Status: Downloaded newer image for hello-world:latest
 Hello from Docker!
 This message shows that your installation appears to be working correctly.
 ```
+
+## Expose docker service for the Win10 host
+
+https://stackoverflow.com/questions/26561963/how-to-detect-a-docker-daemon-port
+
+https://docs.docker.com/desktop/faqs/general/#how-do-i-connect-to-the-remote-docker-engine-api
+
+https://docs.docker.com/engine/install/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
+
+https://docs.docker.com/engine/reference/commandline/dockerd/
+
+https://stackoverflow.com/questions/54067192/vagrant-config-vm-provision-does-not-allow-me-to-copy-a-file-to-etc-nginx-conf
+
+```
+docker context create docker-vagrant --docker host=tcp://localhost:9111
+```
+
+```
+docker context create docker-vagrant --docker host=unix:///var/run/docker.sock
+```
+
+```
+alpine316:/usr/bin$ dockerd -H 0.0.0.0:2375
+INFO[2022-09-13T20:45:05.773324732Z] Starting up
+dockerd needs to be started with root privileges. To run dockerd in rootless mode as an unprivileged user, see https://docs.docker.com/go/rootless/
+alpine316:/usr/bin$ sudo dockerd -H 0.0.0.0:2375
+INFO[2022-09-13T20:45:20.007007231Z] Starting up
+...
+INFO[2022-09-13T20:45:36.172824179Z] Docker daemon                                 commit=e42327a6d3c55ceda3bd5475be7aae6036d02db3 graphdriver(s)=overlay2 version=20.10.18
+INFO[2022-09-13T20:45:36.172869756Z] Daemon has completed initialization
+INFO[2022-09-13T20:45:36.187190792Z] API listen on [::]:2375
+```
+
+```
+echo '{ "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2375"] }' | sudo tee /etc/docker/daemon.json
+```
+
+[9:48 AM] Davy Courvoisier
+for compose file you would have to set:
+
+[9:48 AM] Davy Courvoisier
+> $env:CAP_MESSAGEQUEUE_ADDRESS = '172.29.176.188'
+> $env:CAP_STORAGE_PERSISTENTADDRESS = '172.29.176.188'
+> $env:CAP_LOG_AWS_ADDRESS = 'http://172.29.176.188:4566'
+> $env:CAP_MessageQueue__Type = 'SQSMQ'
+> $env:CAP_MESSAGEQUEUE_PORT = 4566
+
+
+
+docker run -e CAP_MESSAGEQUEUE_ADDRESS=172.29.176.188 -e CAP_Storage__PersistentAddress=mongodb://172.29.176.188:27017 -e CAP_LOG_AWS_ADDRESS=http://172.29.176.188:4566 -e CAP_MessageQueue__Type=SQSMQ -e CAP_MESSAGEQUEUE_PORT=4566 --net="host" docker.artifactory.onbase.net/capture/ms_orchestration
+
+
+docker run -e CAP_MESSAGEQUEUE_ADDRESS=host.docker.internal -e CAP_Storage__PersistentAddress=mongodb://host.docker.internal:27017 -e CAP_LOG_AWS_ADDRESS=http://host.docker.internal:4566 -e CAP_MessageQueue__Type=SQSMQ -e CAP_MESSAGEQUEUE_PORT=4566 docker.artifactory.onbase.net/capture/ms_orchestration
+
+
+docker run -e CAP_MESSAGEQUEUE_ADDRESS=127.0.0.1 -e CAP_Storage__PersistentAddress=mongodb://127.0.0.1:27017 -e CAP_LOG_AWS_ADDRESS=http://127.0.0.1:4566 -e CAP_MessageQueue__Type=SQSMQ -e CAP_MESSAGEQUEUE_PORT=4566 docker.artifactory.onbase.net/capture/ms_orchestration
+
+
+[9:48 AM] Davy Courvoisier
+Then Remove network linux-dependencies in compose file.
+
+[9:48 AM] Davy Courvoisier
+then:
+
+[9:49 AM] Davy Courvoisier
+docker-compose up 
+
+```
+PS D:\Programs\vagrant> hnsdiag list networks
+Network : C08CB7B8-9B3C-408E-8E30-5E16A3AEB444
+    Name             : Default Switch
+    Type             : ICS
+    Subnet Address   : 172.29.176.0/20
+    Gateway          : 172.29.176.1
+
+Network : B95D0C5E-57D4-412B-B571-18A81A16E005
+    Name             : WSL
+    Type             : ICS
+    Subnet Address   : 172.18.112.0/20
+    Gateway          : 172.18.112.1
+
+Network : 76566332-7D5D-4247-82BA-B41F8082FBC4
+    Name             : nat
+    Type             : nat
+    Subnet Address   : 172.20.112.0/20
+    Gateway          : 172.20.112.1
+```
+
+https://www.altaro.com/hyper-v/complete-guide-hyper-v-networking/
+https://www.altaro.com/hyper-v/the-hyper-v-virtual-switch-explained-part-1/
+http://woshub.com/hyper-v-enable-routing/
+
+
+PS D:\Programs\vagrant> Get-VMNetworkAdapter -VMName *
+
+Name            IsManagementOs VMName                              SwitchName     MacAddress   Status IPAddresses
+----            -------------- ------                              ----------     ----------   ------ -----------
+Network Adapter False          vagrant_default_1663083649783_59645 Default Switch 00155DFE6500 {Ok}   {172.29.177.15...
