@@ -1,4 +1,14 @@
-https://www.youtube.com/watch?v=E7zJTzf0pWA
+- [Introduction](#introduction)
+- [Creating VM with Alpine](#creating-vm-with-alpine)
+- [Setup Alpine](#setup-alpine)
+- [Additional configuration in VM](#additional-configuration-in-vm)
+- [ssh to the Alpine VM](#ssh-to-the-alpine-vm)
+- [Install docker on the Alpine VM](#install-docker-on-the-alpine-vm)
+- [Run Nginx server on docker from Alpine VM](#run-nginx-server-on-docker-from-alpine-vm)
+- [Try to connect to the web server form docker windows](#try-to-connect-to-the-web-server-form-docker-windows)
+- [Links](#links)
+# Introduction
+Below you can find steps that allows communicate from windows containers (host is Windows10) to linux containers hosted on Alpine VirtualBox.
 
 # Creating VM with Alpine
 
@@ -33,6 +43,7 @@ https://www.youtube.com/watch?v=E7zJTzf0pWA
 
 * Set bridged adapter to be able access this alpine from the outside of the VirtualBox
 
+**NOTE: it looks that only with bridged adepter win containers can access linux containers which are run in Alpine VirtualBox**
 ![06.png](./images/06.png)
 
 * Uncheck floppy and optical because system is already installed
@@ -145,3 +156,7 @@ docker run -it mcr.microsoft.com/dotnet/sdk:6.0
 curl http://192.168.254.109:8989 // This time param `UseBasicParsing` is not needed
 ```
 and it is working!
+
+
+# Links
+https://github.com/docker/for-win/issues/1397
