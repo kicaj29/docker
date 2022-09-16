@@ -8,7 +8,7 @@
 - [Try to connect to the web server form docker windows](#try-to-connect-to-the-web-server-form-docker-windows)
 - [Links](#links)
 # Introduction
-Below you can find steps that allows communicate from windows containers (host is Windows10) to linux containers hosted on Alpine VirtualBox.
+Below you can find steps that allows communicate from windows containers (host is Windows10) to linux containers hosted on Alpine VirtualBox. In this we we can develop and test both container types on the same machine.
 
 # Creating VM with Alpine
 
