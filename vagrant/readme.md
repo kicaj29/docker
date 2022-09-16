@@ -7,6 +7,12 @@
   - [Prepare docker on VM with Alpine Linux](#prepare-docker-on-vm-with-alpine-linux)
   - [Expose docker service for the Win10 host](#expose-docker-service-for-the-win10-host)
 - [Alpine Linux Vagrant box on VirtualBox](#alpine-linux-vagrant-box-on-virtualbox)
+  - [Install VirtualBox](#install-virtualbox)
+  - [Install Vagrant](#install-vagrant-1)
+  - [Initialized Alpine box](#initialized-alpine-box)
+  - [vagrant up](#vagrant-up-1)
+  - [Install docker on the Alpine box](#install-docker-on-the-alpine-box)
+  - [Disable experimental flag in Docker Desktop](#disable-experimental-flag-in-docker-desktop)
 - [Links](#links)
 - [Commands](#commands)
 
@@ -14,6 +20,8 @@
 In this page I try to explain how to run on Win10 win containers and linux container on Alpine VM and support communication from win containers to linux containers.
 One scenario is to use Hyper-V and second scenario is to use VirtualBox.
 More about vagrant [here](https://www.vagrantup.com/).
+
+**IMPORTANT_NOTE: all the time use the same user from powershell do not switch between admin and normal user during all operations.**
 # Alpine Linux Vagrant box on Hyper-V
 
 ## Install Vagrant
@@ -48,6 +56,7 @@ the comments in the Vagrantfile as well as documentation on
 ## vagrant up
 
 https://www.vagrantup.com/docs/providers/hyperv/limitations   
+**"Networking configurations in the Vagrantfile are completely ignored with Hyper-V"**
 
 https://docs.microsoft.com/en-us/virtualization/community/team-blog/2017/20170706-vagrant-and-hyper-v-tips-and-tricks
 
@@ -239,6 +248,102 @@ Unfortunately windows containers could not access linux containers (timeout).
 
 # Alpine Linux Vagrant box on VirtualBox
 
+## Install VirtualBox
+```
+choco install virtualbox --version=6.1.38
+```
+
+## Install Vagrant
+```
+choco install vagrant --version=2.3.0
+```
+Double check the version: 
+```
+PS C:\> vagrant --version
+Vagrant 2.3.0
+```
+
+## Initialized Alpine box
+
+https://app.vagrantup.com/generic/boxes/alpine316
+
+In folder `D:\Programs\vagrant\vagrant_virtualbox_alpine316` run: `vagrant init generic/alpine316`.
+It will generate this output: "A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant."
+
+Next modify the `Vagrantfile` to the same value like in TBD
+
+## vagrant up
+
+Next run `vagrant up`. It will generate output like this:
+```
+Bringing machine 'default' up with 'virtualbox' provider...                                    
+==> default: Preparing master VM for linked clones...                                          
+    default: This is a one time operation. Once the master VM is prepared,                     
+    default: it will be used as a base for linked clones, making the creation                  
+    default: of new VMs take milliseconds on a modern system.                                  
+==> default: Importing base box 'generic/alpine316'...                                         
+==> default: Cloning VM...                                                                     
+==> default: Matching MAC address for NAT networking...                                        
+==> default: Checking if box 'generic/alpine316' version '4.1.12' is up to date...             
+==> default: Setting the name of the VM: vagrant_virtualbox_alpine316_default_1663329355547_854
+31                                                                                             
+==> default: Clearing any previously set network interfaces...                                 
+==> default: Preparing network interfaces based on configuration...                            
+    default: Adapter 1: nat                                                                    
+    default: Adapter 2: hostonly                                                               
+==> default: Forwarding ports...                                                               
+    default: 22 (guest) => 2222 (host) (adapter 1)                                             
+==> default: Running 'pre-boot' VM customizations...                                           
+==> default: Booting VM...                                                                     
+==> default: Waiting for machine to boot. This may take a few minutes...                       
+    default: SSH address: 127.0.0.1:2222                                                       
+    default: SSH username: vagrant                                                             
+    default: SSH auth method: private key                                                      
+    default:                                                                                   
+    default: Vagrant insecure key detected. Vagrant will automatically replace                 
+    default: this with a newly generated keypair for better security.                          
+    default:                                                                                   
+    default: Inserting generated public key within guest...                                    
+    default: Removing insecure key from the guest if it's present...                           
+    default: Key inserted! Disconnecting and reconnecting using new SSH key...                 
+==> default: Machine booted and ready!                                                         
+==> default: Checking for guest additions in VM...                                             
+==> default: Configuring and enabling network interfaces...                                    
+```
+In my case it stuck first time on `default: SSH auth method: private key`. I had to stop it by Ctrl+C, next `vagrant destroy` and restart my machine and try again and then it worked. More here: https://terryl.in/en/vagrant-up-hangs/
+
+Next we can see in VirtualBox UI that the VM has been created.
+
+![01_vm_virtualbox-alpine.png](./images/01_vm_virtualbox-alpine.png)
+
+## Install docker on the Alpine box
+
+https://wiki.alpinelinux.org/wiki/Docker#Installation   
+https://docs.docker.com/engine/install/linux-postinstall/#configuring-remote-access-with-daemonjson
+
+```
+vagrant ssh
+sudo apk update
+sudo apk upgrade
+sudo apk add docker
+sudo addgroup vagrant docker
+sudo rc-update add docker boot
+sudo service docker start // this will also create folder /etc/docker
+sudo touch /etc/docker/daemon.json
+echo '{ "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2375"] }' | sudo tee /etc/docker/daemon.json
+sudo reboot -d 0
+vagrant ssh
+docker version
+docker run hello-world
+docker -H localhost:2375 ps
+logout
+docker -H 192.168.33.10:2375 ps // this test if we can connect from docker client windows to the docker engine from the Alpine Vagrant box
+```
+
+## Disable experimental flag in Docker Desktop
 
 # Links
 
