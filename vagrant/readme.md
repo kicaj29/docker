@@ -11,7 +11,7 @@
 - [Commands](#commands)
 
 # Introduction
-In this page I try to explain how to run on Win10 win containers and linux container on Alpine VM.
+In this page I try to explain how to run on Win10 win containers and linux container on Alpine VM and support communication from win containers to linux containers.
 One scenario is to use Hyper-V and second scenario is to use VirtualBox.
 More about vagrant [here](https://www.vagrantup.com/).
 # Alpine Linux Vagrant box on Hyper-V
