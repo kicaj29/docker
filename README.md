@@ -148,17 +148,23 @@ Registry is isolated.
 Users and groups are isolated.
 
 ## 2 types containers for Windows
-| Windows Server Containers | Hyper-V Containers|
-|----------|----------|
-| Isolation type | Process | VM |
-| Windows Server 2016 | Yes | Yes |
-| Windows 10 | No | Yes |
 
-When we run windows server containers with process isolation type on host machine are listed process that comes from containers!
+https://learn.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/hyperv-container   
+https://learn.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/version-compatibility?tabs=windows-server-2022%2Cwindows-11-21H2   
 
-![](images/2-types-windows-containers.png)
+* Process Isolation
+  This is the "traditional" isolation mode for containers and used also on Linux (Linux containers supports only this isolation level). When running in this mode, containers **share the same kernel** with the host as well as each other.
+  **Disadvantage:** the base image operating system that is used within the container should match the operating system of the host.
+  For example, you cannot run a container that is based on WinServer 2016 on a Windows Server 2019 host, and you certainly cannot run a container based on WinServer 2019 on WinServer 2016 host.   
 
-It looks that VM isolation type offers stronger isolation but it boots much faster then normal VM.
+  When we run windows server containers with process isolation type on host machine are listed process that comes from containers!
+
+  ![](images/2-types-windows-containers.png)
+
+
+* Hyper-V isolation
+  Multiple container instances run concurrently on a host; however, each container runs inside of a highly optimized virtual machine and effectively gets its **own kernel**. It offers better compatibility between the host OS version and the container base image OS version but not all combinations are possible. For example you cannot run WinServer 2019 container on WinServer 2016 host.
+    
 
 Used isolation type can be specified via param --isolation for example:
 
